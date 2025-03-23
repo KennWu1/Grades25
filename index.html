@@ -1,4 +1,4 @@
-W<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -25,6 +25,36 @@ W<!DOCTYPE html>
             border-radius: 8px;
             padding: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+        .card-header h2 {
+            margin: 0;
+        }
+        .toggle-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            color: #3498db;
+            cursor: pointer;
+            padding: 5px;
+            transition: transform 0.3s ease;
+        }
+        .toggle-btn.collapsed {
+            transform: rotate(-90deg);
+        }
+        .card-content {
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            max-height: 1000px;
+        }
+        .card-content.collapsed {
+            max-height: 0;
         }
         .grid {
             display: grid;
@@ -121,130 +151,150 @@ W<!DOCTYPE html>
     <div class="container">
         <!-- Category Weights -->
         <div class="card">
-            <h2>Category Weights</h2>
-            <div class="grid">
-                <div class="form-group">
-                    <label for="tests-weight">Tests (%)</label>
-                    <div class="slide-container">
-                        <input type="range" id="tests-weight" class="slider" min="0" max="100" value="40">
-                        <input type="number" id="tests-weight-value" class="value-display" min="0" max="100" value="40">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="quizzes-weight">Quizzes (%)</label>
-                    <div class="slide-container">
-                        <input type="range" id="quizzes-weight" class="slider" min="0" max="100" value="20">
-                        <input type="number" id="quizzes-weight-value" class="value-display" min="0" max="100" value="20">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="classworks-weight">Classworks (%)</label>
-                    <div class="slide-container">
-                        <input type="range" id="classworks-weight" class="slider" min="0" max="100" value="20">
-                        <input type="number" id="classworks-weight-value" class="value-display" min="0" max="100" value="20">
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="homeworks-weight">Homeworks (%)</label>
-                    <div class="slide-container">
-                        <input type="range" id="homeworks-weight" class="slider" min="0" max="100" value="20">
-                        <input type="number" id="homeworks-weight-value" class="value-display" min="0" max="100" value="20">
-                    </div>
-                </div>
+            <div class="card-header" onclick="toggleSection('weights-section')">
+                <h2>Category Weights</h2>
+                <button class="toggle-btn" id="weights-section-toggle">▼</button>
             </div>
-            <div id="weight-error" style="color: red; display: none;">Total weights must equal 100%</div>
-            <button id="save-weights">Save Weights</button>
+            <div class="card-content" id="weights-section">
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="tests-weight">Tests (%)</label>
+                        <div class="slide-container">
+                            <input type="range" id="tests-weight" class="slider" min="0" max="100" value="40">
+                            <input type="number" id="tests-weight-value" class="value-display" min="0" max="100" value="40">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="quizzes-weight">Quizzes (%)</label>
+                        <div class="slide-container">
+                            <input type="range" id="quizzes-weight" class="slider" min="0" max="100" value="20">
+                            <input type="number" id="quizzes-weight-value" class="value-display" min="0" max="100" value="20">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="classworks-weight">Classworks (%)</label>
+                        <div class="slide-container">
+                            <input type="range" id="classworks-weight" class="slider" min="0" max="100" value="20">
+                            <input type="number" id="classworks-weight-value" class="value-display" min="0" max="100" value="20">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="homeworks-weight">Homeworks (%)</label>
+                        <div class="slide-container">
+                            <input type="range" id="homeworks-weight" class="slider" min="0" max="100" value="20">
+                            <input type="number" id="homeworks-weight-value" class="value-display" min="0" max="100" value="20">
+                        </div>
+                    </div>
+                </div>
+                <div id="weight-error" style="color: red; display: none;">Total weights must equal 100%</div>
+                <button id="save-weights">Save Weights</button>
+            </div>
         </div>
 
         <!-- Current Grades -->
         <div class="card">
-            <h2>Current Grades</h2>
-            <div class="grid">
-                <div class="form-group">
-                    <label for="tests-category">Tests</label>
-                    <div id="tests-assignments" class="assignments-list"></div>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <input type="number" id="tests-grade" placeholder="Grade (0-100)" min="0" max="100">
-                        <button id="add-test">Add</button>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="quizzes-category">Quizzes</label>
-                    <div id="quizzes-assignments" class="assignments-list"></div>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <input type="number" id="quizzes-grade" placeholder="Grade (0-100)" min="0" max="100">
-                        <button id="add-quiz">Add</button>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="classworks-category">Classworks</label>
-                    <div id="classworks-assignments" class="assignments-list"></div>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <input type="number" id="classworks-grade" placeholder="Grade (0-100)" min="0" max="100">
-                        <button id="add-classwork">Add</button>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="homeworks-category">Homeworks</label>
-                    <div id="homeworks-assignments" class="assignments-list"></div>
-                    <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <input type="number" id="homeworks-grade" placeholder="Grade (0-100)" min="0" max="100">
-                        <button id="add-homework">Add</button>
-                    </div>
-                </div>
+            <div class="card-header" onclick="toggleSection('current-grades-section')">
+                <h2>Current Grades</h2>
+                <button class="toggle-btn" id="current-grades-section-toggle">▼</button>
             </div>
-            <div style="margin-top: 15px;">
-                <button id="calculate-current">Calculate Current Grade</button>
-                <div id="current-grade" class="result"></div>
+            <div class="card-content" id="current-grades-section">
+                <div class="grid">
+                    <div class="form-group">
+                        <label for="tests-category">Tests</label>
+                        <div id="tests-assignments" class="assignments-list"></div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <input type="number" id="tests-grade" placeholder="Grade (0-100)" min="0" max="100">
+                            <button id="add-test">Add</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="quizzes-category">Quizzes</label>
+                        <div id="quizzes-assignments" class="assignments-list"></div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <input type="number" id="quizzes-grade" placeholder="Grade (0-100)" min="0" max="100">
+                            <button id="add-quiz">Add</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="classworks-category">Classworks</label>
+                        <div id="classworks-assignments" class="assignments-list"></div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <input type="number" id="classworks-grade" placeholder="Grade (0-100)" min="0" max="100">
+                            <button id="add-classwork">Add</button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="homeworks-category">Homeworks</label>
+                        <div id="homeworks-assignments" class="assignments-list"></div>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <input type="number" id="homeworks-grade" placeholder="Grade (0-100)" min="0" max="100">
+                            <button id="add-homework">Add</button>
+                        </div>
+                    </div>
+                </div>
+                <div style="margin-top: 15px;">
+                    <button id="calculate-current">Calculate Current Grade</button>
+                    <div id="current-grade" class="result"></div>
+                </div>
             </div>
         </div>
 
         <!-- New Assignment -->
         <div class="card">
-            <h2>Calculate Grade after New Assessment</h2>
-            <div class="form-group">
-                <label for="new-assignment-category">Category</label>
-                <select id="new-assignment-category">
-                    <option value="tests">Tests</option>
-                    <option value="quizzes">Quizzes</option>
-                    <option value="classworks">Classworks</option>
-                    <option value="homeworks">Homeworks</option>
-                </select>
+            <div class="card-header" onclick="toggleSection('new-assignment-section')">
+                <h2>Calculate Grade after New Assessment</h2>
+                <button class="toggle-btn" id="new-assignment-section-toggle">▼</button>
             </div>
-            <div class="form-group">
-                <label for="new-assignment-grade">Expected Grade</label>
-                <div class="slide-container">
-                    <input type="range" id="new-assignment-grade" class="slider" min="0" max="100" value="80">
-                    <input type="number" id="new-assignment-grade-value" class="value-display" min="0" max="100" value="80">
+            <div class="card-content" id="new-assignment-section">
+                <div class="form-group">
+                    <label for="new-assignment-category">Category</label>
+                    <select id="new-assignment-category">
+                        <option value="tests">Tests</option>
+                        <option value="quizzes">Quizzes</option>
+                        <option value="classworks">Classworks</option>
+                        <option value="homeworks">Homeworks</option>
+                    </select>
                 </div>
+                <div class="form-group">
+                    <label for="new-assignment-grade">Expected Grade</label>
+                    <div class="slide-container">
+                        <input type="range" id="new-assignment-grade" class="slider" min="0" max="100" value="80">
+                        <input type="number" id="new-assignment-grade-value" class="value-display" min="0" max="100" value="80">
+                    </div>
+                </div>
+                <button id="calculate-new">Calculate New Grade</button>
+                <div id="new-grade" class="result"></div>
             </div>
-            <button id="calculate-new">Calculate New Grade</button>
-            <div id="new-grade" class="result"></div>
         </div>
 
         <!-- Target Grade -->
         <div class="card">
-            <h2>What Grade Do I Need?</h2>
-            <div class="form-group">
-                <label for="target-grade">Target Overall Grade</label>
-                <div class="slide-container">
-                    <input type="range" id="target-grade" class="slider" min="0" max="100" value="90">
-                    <input type="number" id="target-grade-value" class="value-display" min="0" max="100" value="90">
-                </div>
+            <div class="card-header" onclick="toggleSection('target-grade-section')">
+                <h2>What Grade Do I Need?</h2>
+                <button class="toggle-btn" id="target-grade-section-toggle">▼</button>
             </div>
-            <button id="calculate-needed">Calculate Needed Grades</button>
-            <div id="needed-grades" class="result"></div>
-            <table id="needed-grades-table" class="grade-table" style="display: none;">
-                <thead>
-                    <tr>
-                        <th>Category</th>
-                        <th>Current Average</th>
-                        <th>Needed Grade</th>
-                    </tr>
-                </thead>
-                <tbody id="needed-grades-body">
-                </tbody>
-            </table>
+            <div class="card-content" id="target-grade-section">
+                <div class="form-group">
+                    <label for="target-grade">Target Overall Grade</label>
+                    <div class="slide-container">
+                        <input type="range" id="target-grade" class="slider" min="0" max="100" value="90">
+                        <input type="number" id="target-grade-value" class="value-display" min="0" max="100" value="90">
+                    </div>
+                </div>
+                <button id="calculate-needed">Calculate Needed Grades</button>
+                <div id="needed-grades" class="result"></div>
+                <table id="needed-grades-table" class="grade-table" style="display: none;">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Current Average</th>
+                            <th>Needed Grade</th>
+                        </tr>
+                    </thead>
+                    <tbody id="needed-grades-body">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
@@ -266,6 +316,13 @@ W<!DOCTYPE html>
                 quizzes: [],
                 classworks: [],
                 homeworks: []
+            },
+            // Add collapsed state for each section
+            collapsed: {
+                'weights-section': false,
+                'current-grades-section': false,
+                'new-assignment-section': false,
+                'target-grade-section': false
             }
         };
 
@@ -276,6 +333,10 @@ W<!DOCTYPE html>
                 const parsedState = JSON.parse(savedState);
                 state.weights = parsedState.weights;
                 state.grades = parsedState.grades;
+                // Load collapsed state if available
+                if (parsedState.collapsed) {
+                    state.collapsed = parsedState.collapsed;
+                }
             }
         } catch (e) {
             console.log('Unable to access localStorage. Using default values.');
@@ -316,6 +377,24 @@ W<!DOCTYPE html>
         const targetGrade = document.getElementById('target-grade');
         const targetGradeValue = document.getElementById('target-grade-value');
 
+        // Toggle section collapse/expand
+        function toggleSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            const toggleButton = document.getElementById(sectionId + '-toggle');
+            
+            state.collapsed[sectionId] = !state.collapsed[sectionId];
+            
+            if (state.collapsed[sectionId]) {
+                section.classList.add('collapsed');
+                toggleButton.classList.add('collapsed');
+            } else {
+                section.classList.remove('collapsed');
+                toggleButton.classList.remove('collapsed');
+            }
+            
+            saveToStorage();
+        }
+
         // Initialize UI with current state
         function initializeUI() {
             // Set weight inputs
@@ -327,6 +406,19 @@ W<!DOCTYPE html>
             // Render assignments
             for (const category in state.grades) {
                 renderAssignments(category);
+            }
+            
+            // Apply collapsed state
+            for (const sectionId in state.collapsed) {
+                if (state.collapsed[sectionId]) {
+                    const section = document.getElementById(sectionId);
+                    const toggleButton = document.getElementById(sectionId + '-toggle');
+                    
+                    if (section && toggleButton) {
+                        section.classList.add('collapsed');
+                        toggleButton.classList.add('collapsed');
+                    }
+                }
             }
         }
 
